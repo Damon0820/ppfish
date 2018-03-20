@@ -1,0 +1,124 @@
+import React from 'react';
+import { Row, Col, Card, Collapse, Table } from 'antd';
+import brace from 'brace';
+import AceEditor from 'react-ace';
+import Emitter from '../../monitor/monitor';
+
+import './DocumentLayout.less'
+import 'brace/mode/html';
+import 'brace/theme/textmate';
+import Markdowner from 'markdown-it';
+const md = new Markdowner({
+  html:true,
+  prefix:'code-'
+})
+const Panel = Collapse.Panel;
+const text = `<div>我是代码</div>
+`;
+const columns = [{
+  title: '参数',
+  dataIndex: 'name',
+}, {
+  title: '说明',
+  className: 'column-money',
+  dataIndex: 'money',
+}, {
+  title: '类型',
+  dataIndex: 'address',
+}, {
+  title: '默认值',
+  dataIndex: 'default',
+}];
+const data = [{
+  key: '1',
+  name: '参数1',
+  money: 'aa',
+  address: 'bool',
+  default: 'false'
+}, {
+  key: '2',
+  name: '参数2',
+  money: 'vv',
+  address: 'string',
+  default: '无'
+}, {
+  key: '3',
+  name: '参数3',
+  money: 'ccc',
+  address: 'number',
+  default: '1'
+}];
+class DoucumentLayout extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      demoData: ''
+    }
+  }
+  componentDidMount() { //在组件挂载完成后声明一个自定义事件 
+    Emitter.addListener('CodeChange', (msg) => {
+      this.setState({
+        msg: msg
+      })
+    })
+    Emitter.addListener('Markdown', (msg) =>{
+      let changeMsg = md.render(msg||'');
+      this.setState({
+        markMsg: changeMsg
+      })
+    });
+  }
+  componentWillUnmount() { //组件销毁前移除事件监听  
+    Emitter.removeListener('CodeChange', (msg) => {
+      this.setState({
+        msg: msg
+      })
+    })
+  }
+  callback = (key) => {
+    console.log(key);
+  }
+  onChange = (newValue) => {
+    console.log('change', newValue);
+  }
+  stringToElement = (html) =>{
+    
+    return(
+      <div dangerouslySetInnerHTML={{__html: html}} className="g-table-mk">
+      </div>
+    ) 
+  }
+  render() {
+    return (
+      <div>
+        <Row>
+          <Col span={24}>
+            <Card bordered={false}>
+              {this.props.children}
+              <Collapse defaultActiveKey={['1']} onChange={this.callback}>
+                <Panel header="代码演示" key="1">
+                  <AceEditor
+                    mode="html"
+                    theme="textmate"
+                    onChange={this.onChange}
+                    readOnly={true}
+                    name="UNIQUE_ID_OF_DIV"
+                    editorProps={{ $blockScrolling: true }}
+                    value={this.state.msg}
+                    width='100%'
+                    showGutter={false}
+                    showPrintMargin={false}
+                    highlightActiveLine={false}
+                  />
+                </Panel>
+              </Collapse>
+            </Card>
+          </Col>
+          {this.stringToElement(this.state.markMsg)}
+        </Row>
+
+      </div>
+    )
+  }
+}
+export default DoucumentLayout;
