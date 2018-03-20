@@ -13,41 +13,6 @@ const md = new Markdowner({
   prefix:'code-'
 })
 const Panel = Collapse.Panel;
-const text = `<div>我是代码</div>
-`;
-const columns = [{
-  title: '参数',
-  dataIndex: 'name',
-}, {
-  title: '说明',
-  className: 'column-money',
-  dataIndex: 'money',
-}, {
-  title: '类型',
-  dataIndex: 'address',
-}, {
-  title: '默认值',
-  dataIndex: 'default',
-}];
-const data = [{
-  key: '1',
-  name: '参数1',
-  money: 'aa',
-  address: 'bool',
-  default: 'false'
-}, {
-  key: '2',
-  name: '参数2',
-  money: 'vv',
-  address: 'string',
-  default: '无'
-}, {
-  key: '3',
-  name: '参数3',
-  money: 'ccc',
-  address: 'number',
-  default: '1'
-}];
 class DoucumentLayout extends React.Component {
   constructor(props) {
     super(props);
@@ -74,6 +39,11 @@ class DoucumentLayout extends React.Component {
         msg: msg
       })
     })
+    Emitter.removeListener('CodeChange', (msg) => {
+      this.setState({
+        markMsg: msg
+      })
+    })
   }
   callback = (key) => {
     console.log(key);
@@ -95,7 +65,7 @@ class DoucumentLayout extends React.Component {
           <Col span={24}>
             <Card bordered={false}>
               {this.props.children}
-              <Collapse defaultActiveKey={['1']} onChange={this.callback}>
+              <Collapse onChange={this.callback}>
                 <Panel header="代码演示" key="1">
                   <AceEditor
                     mode="html"
