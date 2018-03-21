@@ -14,7 +14,7 @@ import StickVerticalMenu from '../components/StickVerticalMenu/demo/App';
 import Suggest from '../components/Suggest/demo/App';
 import TextOverflow from '../components/TextOverflow/demo/App';
 import TreeSelect from '../components/TreeSelect/demo/App';
-import UIKJGF from '../components/UI控件规范/demo/App';
+import UIKJGF from '../components/UI/demo/App';
 
 // import NumberCounter from '../components/NumberCounter/demo/App';
 
