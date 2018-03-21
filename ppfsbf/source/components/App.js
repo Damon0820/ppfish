@@ -5,6 +5,7 @@ import axios from 'axios';
 import Emitter from '../monitor/monitor';
 import './App.less';
 import Loading from './Loading';
+import Jsonp from 'jsonp'
 let Markdown = require('./AnimationImageLoader/demo/Markdown.js')
 const requireContext = require.context("../components", true, /demo\/App\.js$/);
 const SubMenu = Menu.SubMenu;
@@ -14,26 +15,36 @@ class App extends React.Component {
     super(props)
     this.state = {
       component: null,
-      theme: 'light', 
+      theme: 'light',
+      current: '1',
     };
   }
   componentDidMount() {
   }
-  stringToElement = (html) =>{
-    
-    return(
-      <div dangerouslySetInnerHTML={{__html: html}} className="g-table-mk">
+  stringToElement = (html) => {
+    return (
+      <div dangerouslySetInnerHTML={{ __html: html }} className="g-table-mk">
       </div>
-    ) 
+    )
   }
   urlChange = (url = '/demo/AnimationImageLoader/') => {
+
+    // this.setState({
+    //   current: e.key,
+    // });
     let urlArgu = url.replace(/\/demo\/|\//g, '');
-    axios.get('../../components/' + urlArgu + '/demo/App.js')
+    axios.get('https://raw.githubusercontent.com/octopusccc1/ppfish/master/ppfsbf/source/components/' + urlArgu + '/demo/App.js')
       .then(res => {
-        let Markdown = require('./'+urlArgu+'/demo/Markdown.js')
+        let Markdown = require('./' + urlArgu + '/demo/Markdown.js')
         Emitter.emit('CodeChange', res.data);
         Emitter.emit('Markdown', Markdown);
       })
+    // Jsonp('https://github.com/octopusccc1/ppfish/blob/master/ppfsbf/source/components/AnimationImageLoader/demo/App.js',null,(err,res) =>{
+    //     let Markdown = require('./'+urlArgu+'/demo/Markdown.js')
+    //     Emitter.emit('CodeChange', res.data);
+    //     Emitter.emit('Markdown', Markdown);
+    // })
+
   }
   render() {
     let urlArguArray = location.href.split('demo');
@@ -42,7 +53,6 @@ class App extends React.Component {
     } else {
       this.urlChange()
     }
-    
     return (
       <div className="g-content" >
         <Row >
@@ -65,7 +75,6 @@ class App extends React.Component {
                         <Link to={url} onClick={this.urlChange.bind(this, url)}>
                           {name}
                         </Link>
-
                       </Menu.Item>
                     )
                   })
